@@ -35,20 +35,21 @@
 
 - (void)commonInit {
     self.backgroundColor = [UIColor clearColor];
-    
+
     self.emitter = [CAEmitterLayer layer];
     self.emitter.emitterPosition = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMaxY(self.frame) );
     self.emitter.emitterSize = CGSizeMake(20, 20);
     self.emitter.emitterMode = kCAEmitterLayerAdditive;
     self.emitter.emitterShape = kCAEmitterLayerRectangle;
+    self.emitter.speed = 1.75;
+
     [self.layer addSublayer:_emitter];
-    
-    
+
     _colorize = YES;
-    
+
     //Add the cell to the emitter layer
     _emitter.emitterCells = @[[self createEmitterCell]];
-    
+
     self.location = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMaxY(self.frame));
     self.target = CGPointMake(CGRectGetMinX(self.frame), CGRectGetMaxY(self.frame));
     self.velocity = 300.0f;
@@ -59,16 +60,16 @@
 - (void)shoot {
     self.emitter.beginTime = CACurrentMediaTime();
 
-        
-        
+
+
     [self.emitter setValue:[NSNumber numberWithFloat:self.amount] forKeyPath:@"emitterCells.confetti.birthRate"];
 
 
-    
+
     double delayInSeconds = 0.1; // One cloud will have been created by now, but not two
     dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
     dispatch_after(popTime, dispatch_get_main_queue(), ^(void) {
-        
+
 
         [self.emitter setValue:[NSNumber numberWithFloat:0] forKeyPath:@"emitterCells.confetti.birthRate"];
     });
@@ -111,7 +112,7 @@
 - (CAEmitterCell *)createEmitterCell {
     //Create a new emitter cell
     CAEmitterCell* emitterCell = [CAEmitterCell emitterCell];
-    
+
     //Set the cell’s contents property to the texture you loaded
     if (!self.particleImage) {
         NSBundle* bundle = [NSBundle bundleForClass:self.class];
@@ -121,15 +122,15 @@
     } else {
         emitterCell.contents = (__bridge id)[self.particleImage CGImage];
     }
-    
+
     //Name the cell “cell”
     emitterCell.name = @"confetti";
-    
+
     //Parameters
     emitterCell.birthRate = 0;
     emitterCell.lifetime = 7;
     emitterCell.lifetimeRange = 2;
-    
+
     if (_colorize) {
     //Set the cell’s color to randomly vary its components
         emitterCell.blueRange = 1.00;
@@ -146,27 +147,27 @@
         emitterCell.greenRange = 0;
         emitterCell.greenSpeed = 0;
     }
-    
+
     //velocity
     emitterCell.velocity = self.velocity;
     emitterCell.velocityRange = floorf(self.velocity/10);
-    
+
     //Alpha
     emitterCell.alphaSpeed = 4.5;
     emitterCell.alphaRange = 0.5;
-    
+
     //Scale
     emitterCell.scale = 0.5;//0.5
     emitterCell.scaleRange = 0.5;//0.5
     emitterCell.scaleSpeed = 0.1;
-    
+
     emitterCell.spin = M_PI;
     emitterCell.spinRange = M_PI/2;
-    
+
     //Range
     emitterCell.emissionLongitude = -M_PI / 2; //Up
     emitterCell.emissionRange = M_PI / 12;
-    
+
     emitterCell.yAcceleration = 180;
     return emitterCell;
 }
@@ -180,7 +181,7 @@
     return bearingRadians;
 }
 
-- (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event {    
+- (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event {
     return NO;
 }
 
